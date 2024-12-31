@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Notifications</title>
+</head>
+<body>
+    <h1>Real-time Notification Demo</h1>
+    <button id="sendBtn">Send Notification</button>
+    <p id="status"></p>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        (async () => {
+            const socket = io();
+
+            // Request notification permission
+            const requestPermission = async () => {
+                if (Notification.permission === 'default' || Notification.permission === 'denied') {
+                    await Notification.requestPermission();
+                }
+            };
+
+            await requestPermission();
+
+            // Click handler for sending notifications
+            document.getElementById('sendBtn').addEventListener('click', () => {
+                const message = "Hello! This is a real-time notification.";
+                socket.emit('sendNotification', message);
+            });
+
+            // Receive and display notifications
+            socket.on('receiveNotification', (message) => {
+                if (Notification.permission === 'granted') {
+                    new Notification('Real-time Notification', {
+                        body: message,
+                    });
+                } else {
+                    document.getElementById('status').innerText = 
+                      'Notification permission is not granted!';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
