@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1>Real-time Notification Demo</h1>
+    <input type="text" id="messageInput" placeholder="Type your message here..." />
     <button id="sendBtn">Send Notification</button>
     <p id="status"></p>
 
@@ -26,8 +27,13 @@
 
             // Click handler for sending notifications
             document.getElementById('sendBtn').addEventListener('click', () => {
-                const message = "Hello! This is a real-time notification.";
-                socket.emit('sendNotification', message);
+                const message = document.getElementById('messageInput').value; // Get message from input
+                if (message.trim() !== '') {
+                    socket.emit('sendNotification', message);
+                    document.getElementById('messageInput').value = ''; // Clear input after sending
+                } else {
+                    alert('Please enter a message before sending!');
+                }
             });
 
             // Receive and display notifications
